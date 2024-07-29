@@ -11,7 +11,7 @@ const SaveData = require('./settings');
 const analytics = require('./wrappers/analytics')
 const os = require('os');
 
-vars.modulePath = path.resolve(vars.resourcesPath, "../", "exploit-main.dll")
+vars.mainDirectory = path.resolve(vars.resourcesPath, "../")
 vars.CeleryPath = path.resolve(vars.resourcesPath, '../')
 vars.celeryTempPath = path.resolve(os.tmpdir(), 'celery');
 
@@ -192,7 +192,7 @@ module.exports = async function(){
                     newPath += path.sep;
                 }
                 
-                return newPath;
+                return p; //newPath;
             }
 
             //probably a better way to make these lmao
@@ -206,6 +206,9 @@ module.exports = async function(){
                 fs.writeFileSync(path.join(vars.celeryTempPath, 'launchargs.txt'), '');
                 fs.writeFileSync(path.join(vars.celeryTempPath, 'myfile.txt'), '');
                 fs.writeFileSync(path.join(vars.celeryTempPath, 'robloxexe.txt'), '');
+            }
+            if(!fs.existsSync(path.join(vars.mainDirectory, 'autoexec'))){
+                fs.mkdirSync(path.join(vars.mainDirectory, 'autoexec'))
             }
             fs.writeFileSync(path.join(vars.celeryTempPath, 'celeryhome.txt'), removeOneDriveFromPath(path.join(vars.modulePath, "../")));
             await DownloadFile(vars.latestData.CeleryFiles.CeleryInject_exe, path.resolve(vars.CeleryPath, "CeleryInject.exe"))
