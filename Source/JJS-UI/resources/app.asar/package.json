@@ -1,0 +1,19 @@
+{
+  "name": "JJS-UI",
+  "version": "6.4.12",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.21.1",
+    "download": "^7.1.0",
+    "electron-is-dev": "^1.2.0",
+    "universal-analytics": "^0.4.20"
+  },
+  "main": "build/electron.js",
+  "browserslist": [
+    ">0.3%",
+    "not ie 11",
+    "not dead",
+    "not op_mini all"
+  ],
+  "homepage": "./"
+}
