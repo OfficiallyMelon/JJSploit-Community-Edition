@@ -1,17 +1,32 @@
--- Initialization of key variables
-FLYING = false
-QEfly = true
-iyflyspeed = 1
-vehicleflyspeed = 1
-Players = game.Players
-IYMouse = Players.LocalPlayer:GetMouse()
+local FLYING = false
+local QEfly = true
+local iyflyspeed = 1
+local vehicleflyspeed = 1
+local Players = game.Players
+local IYMouse = Players.LocalPlayer:GetMouse()
+local flyKeyDown, flyKeyUp -- Event handlers for key presses
+local CoreGui = game:GetService("CoreGui")
+scriptRunning = true
 
+if CoreGui:FindFirstChild("FlyValue") then
+    scriptRunning = false
+    if CoreGui:FindFirstChild("FlyValue").Value then
+        CoreGui:FindFirstChild("FlyValue").Value = false
+        print("Fly Enabled")
+    else
+        CoreGui:FindFirstChild("FlyValue").Value = true
+        print("Fly Disabled")
+    end
+end
+
+if scriptRunning then
 -- Function to get the root part of the character
-function getRoot(character)
+local function getRoot(character)
     return character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("HumanoidRootPart")
 end
 
-function sFLY(vfly)
+-- Function to start flying
+local function sFLY(vfly)
     repeat wait() until Players.LocalPlayer and Players.LocalPlayer.Character and getRoot(Players.LocalPlayer.Character) and Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
     repeat wait() until IYMouse
 
@@ -68,36 +83,40 @@ function sFLY(vfly)
 
     -- Key down event handler
     flyKeyDown = IYMouse.KeyDown:Connect(function(KEY)
-        if KEY:lower() == 'w' then
-            CONTROL.F = (vfly and vehicleflyspeed or iyflyspeed)
-        elseif KEY:lower() == 's' then
-            CONTROL.B = - (vfly and vehicleflyspeed or iyflyspeed)
-        elseif KEY:lower() == 'a' then
-            CONTROL.L = - (vfly and vehicleflyspeed or iyflyspeed)
-        elseif KEY:lower() == 'd' then 
-            CONTROL.R = (vfly and vehicleflyspeed or iyflyspeed)
-        elseif QEfly and KEY:lower() == 'e' then
-            CONTROL.Q = (vfly and vehicleflyspeed or iyflyspeed) * 2
-        elseif QEfly and KEY:lower() == 'q' then
-            CONTROL.E = - (vfly and vehicleflyspeed or iyflyspeed) * 2
+        if FLYING then
+            if KEY:lower() == 'w' then
+                CONTROL.F = (vfly and vehicleflyspeed or iyflyspeed)
+            elseif KEY:lower() == 's' then
+                CONTROL.B = - (vfly and vehicleflyspeed or iyflyspeed)
+            elseif KEY:lower() == 'a' then
+                CONTROL.L = - (vfly and vehicleflyspeed or iyflyspeed)
+            elseif KEY:lower() == 'd' then 
+                CONTROL.R = (vfly and vehicleflyspeed or iyflyspeed)
+            elseif QEfly and KEY:lower() == 'e' then
+                CONTROL.Q = (vfly and vehicleflyspeed or iyflyspeed) * 2
+            elseif QEfly and KEY:lower() == 'q' then
+                CONTROL.E = - (vfly and vehicleflyspeed or iyflyspeed) * 2
+            end
+            pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Track end)
         end
-        pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Track end)
     end)
 
     -- Key up event handler
     flyKeyUp = IYMouse.KeyUp:Connect(function(KEY)
-        if KEY:lower() == 'w' then
-            CONTROL.F = 0
-        elseif KEY:lower() == 's' then
-            CONTROL.B = 0
-        elseif KEY:lower() == 'a' then
-            CONTROL.L = 0
-        elseif KEY:lower() == 'd' then 
-            CONTROL.R = 0
-        elseif KEY:lower() == 'e' then
-            CONTROL.Q = 0
-        elseif KEY:lower() == 'q' then
-            CONTROL.E = 0
+        if FLYING then
+            if KEY:lower() == 'w' then
+                CONTROL.F = 0
+            elseif KEY:lower() == 's' then
+                CONTROL.B = 0
+            elseif KEY:lower() == 'a' then
+                CONTROL.L = 0
+            elseif KEY:lower() == 'd' then 
+                CONTROL.R = 0
+            elseif KEY:lower() == 'e' then
+                CONTROL.Q = 0
+            elseif KEY:lower() == 'q' then
+                CONTROL.E = 0
+            end
         end
     end)
 
@@ -105,7 +124,7 @@ function sFLY(vfly)
 end
 
 -- Function to stop flying
-function NOFLY()
+local function NOFLY()
     FLYING = false
     if flyKeyDown then flyKeyDown:Disconnect() end
     if flyKeyUp then flyKeyUp:Disconnect() end
@@ -115,5 +134,34 @@ function NOFLY()
     pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Custom end)
 end
 
--- Start flying
-sFLY()
+-- Function to toggle flying
+local function ToggleFly(enable, vfly)
+    if enable then
+        sFLY(vfly)
+    else
+        NOFLY()
+    end
+end
+
+-- Start flying (toggle on)
+ToggleFly(true, false)
+
+-- To disable flying, call ToggleFly(false)
+if not CoreGui:FindFirstChild("FlyValue") then
+    local FlyValue = Instance.new("BoolValue")
+    FlyValue.Parent = CoreGui
+    FlyValue.Name = "FlyValue"
+    FlyValue.Value = false
+end
+
+game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Died:Connect(function()
+    CoreGui:FindFirstChild("FlyValue"):Destroy()
+    script:Destroy()
+end)
+
+CoreGui:FindFirstChild("FlyValue"):GetPropertyChangedSignal("Value"):Connect(function()
+    ToggleFly(CoreGui:FindFirstChild("FlyValue").Value, false)
+    print(tostring(CoreGui:FindFirstChild("FlyValue").Value))
+end)
+
+end

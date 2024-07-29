@@ -1,27 +1,48 @@
---[[
-	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
-]]
-local Noclip = nil
-local Clip = nil
+local Character = game.Players.LocalPlayer.Character
+scriptRunning = true
+local CoreGui = game:GetService("CoreGui")
 
-function noclip()
-	Clip = false
-	local function Nocl()
-		if Clip == false and game.Players.LocalPlayer.Character ~= nil then
-			for _,v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-				if v:IsA('BasePart') and v.CanCollide and v.Name ~= floatName then
-					v.CanCollide = false
+if CoreGui:FindFirstChild("NoclipValue") then
+    scriptRunning = false
+    if CoreGui:FindFirstChild("NoclipValue").Value then
+        CoreGui:FindFirstChild("NoclipValue").Value = false
+        print("NoClip Enabled")
+    else
+        CoreGui:FindFirstChild("NoclipValue").Value = true
+        print("NoClip Disabled")
+    end
+end
+
+if scriptRunning then
+Clip = false
+	wait(0.1)
+	local function NoclipLoop()
+		if Clip == false and Character ~= nil then
+			for _, child in pairs(Character:GetDescendants()) do
+				if child:IsA("BasePart") and child.CanCollide == true then
+					child.CanCollide = false
 				end
 			end
 		end
-		wait(0.21) -- basic optimization
 	end
-	Noclip = game:GetService('RunService').Stepped:Connect(Nocl)
+	--Noclipping = RunService.Stepped:Connect(NoclipLoop)
+
+    -- To disable flying, call ToggleFly(false)
+if not CoreGui:FindFirstChild("NoclipValue") then
+    local FlyValue = Instance.new("BoolValue")
+    FlyValue.Parent = CoreGui
+    FlyValue.Name = "NoclipValue"
+    FlyValue.Value = false
 end
 
-function clip()
-	if Noclip then Noclip:Disconnect() end
-	Clip = true
-end
+game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Died:Connect(function()
+    CoreGui:FindFirstChild("NoclipValue"):Destroy()
+    script:Destroy()
+end)
 
-noclip() -- to toggle noclip() and clip()
+CoreGui:FindFirstChild("NoclipValue"):GetPropertyChangedSignal("Value"):Connect(function()
+    Clip = CoreGui:FindFirstChild("NoclipValue").Value
+    print(tostring(CoreGui:FindFirstChild("NoclipValue").Value))
+end)
+
+end
