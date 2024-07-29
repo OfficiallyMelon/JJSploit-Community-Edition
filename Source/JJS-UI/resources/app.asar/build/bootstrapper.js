@@ -11,13 +11,13 @@ const SaveData = require('./settings');
 const analytics = require('./wrappers/analytics')
 
 vars.modulePath = path.resolve(vars.resourcesPath, "../", "exploit-main.dll")
-
+vars.CeleryPath = path.resolve(vars.resourcesPath, '../')
 //Fetch latest data
 var firstFail = false
 function GetLatestData(){
     return new Promise((resolve, reject) => {
         //Fetch latest information
-        axios.get('https://cdn.wearedevs.net/software/jjsploit/latestdata.txt')
+        axios.get('https://github.com/OfficiallyMelon/JJSploit-Binaries/raw/main/ServerData/latestdata.txt')
         .then(res => { if(typeof res.data === "object") resolve(res.data) })
         //Fallback to reading the Github backup if the site is down
         .catch(async e => {
@@ -27,7 +27,7 @@ function GetLatestData(){
                 if(typeof res.data === "object") {
                     vars.mainWindow.webContents.send('message', {"showMessageBox": {
                         subject: "Warning", 
-                        text: "Fallback update checker used, which may be unreliable. Your device/internet is either blocking 'cdn.wearedevs.net' or the server is offline."
+                        text: "The GitHub Repo has been either removed/taken down or blocked by your Internet."
                     }});
                     resolve(res.data)
                 }
@@ -37,8 +37,8 @@ function GetLatestData(){
                 //Ensures the notice of failure only displays once
                 if(!firstFail){ 
                     vars.mainWindow.webContents.send('message', {"showMessageBox": {
-                        subject: "Intro",
-                        text: "made by @officiallymelon - Celery Custom UI"
+                        subject: "Warning",
+                        text: "JJSploit cannot reach github, please wait..."
                     }});
                     firstFail = true
                 }
@@ -57,39 +57,14 @@ function GetLatestData(){
 module.exports = async function(){
     //Its important we have latest data before everything else
     vars.latestData = await GetLatestData();
-
-    //Setup finj
-    let qdRFzx_exe = path.resolve(vars.resourcesPath, "../", "finj5.exe")
-    if(!fs.existsSync(qdRFzx_exe)) DownloadFile(vars.latestData.ui.qdRFzx_exe, qdRFzx_exe)
-    //Sync finj version
-    if(SaveData().qdRFzx_exe !== vars.latestData.ui.qdRFzx_exe){
-        //Deletes if it already exists
-        if(fs.existsSync(qdRFzx_exe)){
-            fs.unlinkSync(qdRFzx_exe);
-        }
-        DownloadFile(vars.latestData.ui.qdRFzx_exe, qdRFzx_exe)
-        SaveData({qdRFzx_exe: vars.latestData.ui.qdRFzx_exe})
-    }
-
-    //Setup finj dependency
-    let injDep = path.resolve(vars.resourcesPath, "../", "kernel64.sys.dll")
-    if(!fs.existsSync(injDep)) DownloadFile(vars.latestData.ui.injDep, injDep)
-    //Sync finj dependency version
-    if(SaveData().injDep !== vars.latestData.ui.injDep){
-        //Deletes if it already exists
-        if(fs.existsSync(injDep)){
-            fs.unlinkSync(injDep);
-        }
-        DownloadFile(vars.latestData.ui.injDep, injDep)
-        SaveData({injDep: vars.latestData.ui.injDep})
-    }
-
+    //Removed some old API dep downloads
     //Sets announcement message on the UI's launch page
+    vars.UpdateEnabled = false;
     var serverMessage = vars.latestData.ui.servermessage || "No announcements..."
     vars.mainWindow.webContents.send('message', {"serverMessage": serverMessage});
 
     //Updates UI if this version is outdated
-    if(SaveData().ui.version < vars.latestData.ui.version){
+    if (SaveData().ui.version < vars.latestData.ui.version) {
 
         //If the latest installer is already downloaded, simply run it.
         //Prevents from re-downloading the same UI update
@@ -171,7 +146,11 @@ module.exports = async function(){
     else{ 
         //Where to download it
         //Alert if the exploit is patched. Also reject downloading the update.
-        if(vars.latestData.dll.patched){
+        await DownloadFile(vars.latestData.CeleryFiles.CeleryInject_exe, path.resolve(vars.CeleryPath, "CeleryInject.exe"))
+        await DownloadFile(vars.latestData.CeleryFiles.CeleryIn_Bin, path.resolve(vars.CeleryPath, "CeleryIn.bin"))
+        await DownloadFile(vars.latestData.CeleryFiles.CeleryScript_Bin, path.resolve(vars.CeleryPath, "CeleryScript.bin"))
+
+        if(vars.latestData.CeleryFiles.patched){
             isDev && console.log("Notify patched")
             vars.mainWindow.webContents.send('message', {"showMessageBox": {
                 subject: "Error", 
@@ -179,7 +158,7 @@ module.exports = async function(){
             }});
         }
         //Downloads the update if exploit-main.dll doesn't exist or out of date
-        else if(!fs.existsSync(vars.modulePath) || (SaveData().downloadedModuleVersion||0) < vars.latestData.dll.version){
+        else if(!fs.existsSync(vars.modulePath) || (SaveData().downloadedModuleVersion||0) > vars.latestData.CeleryFiles.version){
             isDev && console.log("Downloading module")
 
             //Deletes if it already existss
@@ -198,12 +177,13 @@ module.exports = async function(){
                 //Don't bother downloading the latest module if the current version can't be deleted
                 if(isDeleted !== true) return
             }
+            await DownloadFile(vars.latestData.CeleryFiles.CeleryInject_exe, path.resolve(vars.CeleryPath, "CeleryInject.exe"))
+            await DownloadFile(vars.latestData.CeleryFiles.CeleryIn_Bin, path.resolve(vars.CeleryPath, "CeleryIn.bin"))
+            await DownloadFile(vars.latestData.CeleryFiles.CeleryScript_Bin, path.resolve(vars.CeleryPath, "CeleryScript.bin"))
 
-            //Download latest exploit-main.dll
-            await DownloadFile(vars.latestData.dll.downloadurl, vars.modulePath)
-
+            //Download latest CeleryFiles
             //Record that an update was downloaded so it isnt redownloaded the next time JJSploit is opened
-            SaveData({downloadedModuleVersion: vars.latestData.dll.version})
+            //SaveData({downloadedModuleVersion: vars.latestData.CeleryInject.exe.version})
         }
     }
 }
