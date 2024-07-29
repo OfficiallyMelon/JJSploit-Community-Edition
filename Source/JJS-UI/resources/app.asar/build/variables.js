@@ -4,5 +4,6 @@ const path = require('path');
 module.exports = {
     mainWindow: null,
     latestData: null,
-    resourcesPath: isDev ? path.resolve(__dirname, "../resources") : process.resourcesPath
+    resourcesPath: isDev ? path.resolve(__dirname, "../resources") : process.resourcesPath,
+    InjectorVersion: 1,
 }

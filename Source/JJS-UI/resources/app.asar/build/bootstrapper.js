@@ -211,9 +211,20 @@ module.exports = async function(){
                 fs.mkdirSync(path.join(vars.mainDirectory, 'autoexec'))
             }
             fs.writeFileSync(path.join(vars.celeryTempPath, 'celeryhome.txt'), removeOneDriveFromPath(path.join(vars.modulePath, "../")));
-            await DownloadFile(vars.latestData.CeleryFiles.CeleryInject_exe, path.resolve(vars.CeleryPath, "CeleryInject.exe"))
-            await DownloadFile(vars.latestData.CeleryFiles.CeleryIn_Bin, path.resolve(vars.CeleryPath, "CeleryIn.bin"))
-            await DownloadFile(vars.latestData.CeleryFiles.CeleryScript_Bin, path.resolve(vars.CeleryPath, "CeleryScript.bin"))
+            if (vars.InjectorVersion < vars.latestData.CeleryFiles.version){
+                await DownloadFile(vars.latestData.CeleryFiles.CeleryInject_exe, path.resolve(vars.CeleryPath, "CeleryInject.exe"))
+                await DownloadFile(vars.latestData.CeleryFiles.CeleryIn_Bin, path.resolve(vars.CeleryPath, "CeleryIn.bin"))
+                await DownloadFile(vars.latestData.CeleryFiles.CeleryScript_Bin, path.resolve(vars.CeleryPath, "CeleryScript.bin"))
+            }
+            if(!fs.existsSync(path.resolve(vars.CeleryPath, "CeleryInject.exe"))){
+                await DownloadFile(vars.latestData.CeleryFiles.CeleryInject_exe, path.resolve(vars.CeleryPath, "CeleryInject.exe"))
+            }
+            if(!fs.existsSync(path.resolve(vars.CeleryPath, "CeleryIn.bin"))){
+                await DownloadFile(vars.latestData.CeleryFiles.CeleryIn_Bin, path.resolve(vars.CeleryPath, "CeleryIn.bin"))
+            }
+            if(!fs.existsSync(path.resolve(vars.CeleryPath, "CeleryScript.bin"))){
+                await DownloadFile(vars.latestData.CeleryFiles.CeleryScript_Bin, path.resolve(vars.CeleryPath, "CeleryScript.bin"))
+            }
             //Record that an update was downloaded so it isnt redownloaded the next time JJSploit is opened
            // SaveData({downloadedModuleVersion: vars.latestData.CeleryFiles.CeleryInject_exe.version})
         }
