@@ -1,0 +1,1 @@
+_G.WRDAimbotBypass = not _G.WRDAimbotBypass

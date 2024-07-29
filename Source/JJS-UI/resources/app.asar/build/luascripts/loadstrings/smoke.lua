@@ -1,0 +1,1 @@
+Instance.new("Smoke", game:GetService("Players").LocalPlayer.Character.HumanoidRootPart)

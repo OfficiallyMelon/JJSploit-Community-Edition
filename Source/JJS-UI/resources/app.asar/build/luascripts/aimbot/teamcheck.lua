@@ -1,0 +1,1 @@
+_G.WRDAimbotTeamCheck = not _G.WRDAimbotTeamCheck

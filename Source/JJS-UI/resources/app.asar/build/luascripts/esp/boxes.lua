@@ -1,0 +1,1 @@
+_G.WRDESPBoxes = not _G.WRDESPBoxes

@@ -1,0 +1,1 @@
+_G.WRDESPTeamColors = not _G.WRDESPTeamColors

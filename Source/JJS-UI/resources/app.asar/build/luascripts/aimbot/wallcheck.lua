@@ -1,0 +1,1 @@
+_G.WRDAimBotWallcheck = not _G.WRDAimBotWallcheck

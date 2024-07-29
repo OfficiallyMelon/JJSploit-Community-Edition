@@ -1,0 +1,1 @@
+Instance.new("Sparkles", game:GetService("Players").LocalPlayer.Character.HumanoidRootPart)
