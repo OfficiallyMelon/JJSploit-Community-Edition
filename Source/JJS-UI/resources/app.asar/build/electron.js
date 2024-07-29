@@ -3,7 +3,7 @@ const { BrowserWindow, app, ipcMain, shell } = require('electron')
 const isDev = require('electron-is-dev')
 const fs = require("fs")
 const ExploitAPI = require('./JJSploitModule')
-
+const ProcessChecker = require('./eipc/ProcessChecker')
 const SaveData = require('./settings')
 var vars = require('./variables');
 const analytics = require('./wrappers/analytics')
@@ -92,9 +92,10 @@ app.on('ready', async () => {
 		
 		//Starts checking if the exploit is injected
 		require('./attachcheck').StartChecking()
-
+		ProcessChecker.startMonitoring();
 		//Starts checking if the game closed
 		//checkGameClosed()
+
 	})
 
 	//Sets links to open on the client's default browser

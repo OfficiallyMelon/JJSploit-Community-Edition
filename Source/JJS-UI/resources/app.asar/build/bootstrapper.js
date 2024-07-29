@@ -9,9 +9,12 @@ const DownloadFile = require('./wrappers/downloadfile')
 const ExploitAPI = require('./JJSploitModule');
 const SaveData = require('./settings');
 const analytics = require('./wrappers/analytics')
+const os = require('os');
 
 vars.modulePath = path.resolve(vars.resourcesPath, "../", "exploit-main.dll")
 vars.CeleryPath = path.resolve(vars.resourcesPath, '../')
+vars.celeryTempPath = path.resolve(os.tmpdir(), 'celery');
+
 //Fetch latest data
 var firstFail = false
 function GetLatestData(){
@@ -173,13 +176,43 @@ module.exports = async function(){
                 //Don't bother downloading the latest module if the current version can't be deleted
                 if(isDeleted !== true) return
             }
-            //probably a better way to batch download these files, but eh
 
+            function removeOneDriveFromPath(p) {
+                // Split the path into segments
+                const segments = p.split(path.sep);
+                
+                // Filter out "OneDrive" segments
+                const filteredSegments = segments.filter(segment => segment.toLowerCase() !== 'onedrive');
+                
+                // Rejoin the filtered segments into a new path
+                let newPath = path.join(...filteredSegments);
+                
+                // Ensure the path ends with a backslash (on Windows)
+                if (process.platform === 'win32' && !newPath.endsWith(path.sep)) {
+                    newPath += path.sep;
+                }
+                
+                return newPath;
+            }
+
+            //probably a better way to make these lmao
+            if(!fs.existsSync(vars.celeryTempPath)){
+                fs.mkdirSync(vars.celeryTempPath, { recursive: true });
+                fs.mkdirSync(path.join(vars.celeryTempPath, 'workspace'), { recursive: true });
+                fs.writeFileSync(path.join(vars.celeryTempPath, 'autolaunch.txt'), 'false');
+                fs.writeFileSync(path.join(vars.celeryTempPath, 'callback.txt'), '');
+                fs.writeFileSync(path.join(vars.celeryTempPath, 'celeryhome.txt'), '');
+                fs.writeFileSync(path.join(vars.celeryTempPath, 'CeleryLog.txt'), '');
+                fs.writeFileSync(path.join(vars.celeryTempPath, 'launchargs.txt'), '');
+                fs.writeFileSync(path.join(vars.celeryTempPath, 'myfile.txt'), '');
+                fs.writeFileSync(path.join(vars.celeryTempPath, 'robloxexe.txt'), '');
+            }
+            fs.writeFileSync(path.join(vars.celeryTempPath, 'celeryhome.txt'), removeOneDriveFromPath(path.join(vars.modulePath, "../")));
             await DownloadFile(vars.latestData.CeleryFiles.CeleryInject_exe, path.resolve(vars.CeleryPath, "CeleryInject.exe"))
             await DownloadFile(vars.latestData.CeleryFiles.CeleryIn_Bin, path.resolve(vars.CeleryPath, "CeleryIn.bin"))
             await DownloadFile(vars.latestData.CeleryFiles.CeleryScript_Bin, path.resolve(vars.CeleryPath, "CeleryScript.bin"))
             //Record that an update was downloaded so it isnt redownloaded the next time JJSploit is opened
-            //SaveData({downloadedModuleVersion: vars.latestData.CeleryFiles.CeleryInject_exe.version})
+            SaveData({downloadedModuleVersion: vars.latestData.CeleryFiles.CeleryInject_exe.version})
         }
     }
 }

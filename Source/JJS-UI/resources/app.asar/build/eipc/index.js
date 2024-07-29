@@ -22,7 +22,7 @@ module.exports = function(event, message) {
 		case "fixroblox":
 			/*The function returns true if found a single roblox process and killed, otherwise false.
 			Repeat until false to assume all occurances of Roblox are closed. Hacky :D*/
-			//while (ExploitAPI.KillRoblox()){}
+			while (WindowsPlayer.killSingleRobloxPlayerBeta()){}
 			break
 		case "toggletopwindow":
 			ToggleTopWindow()

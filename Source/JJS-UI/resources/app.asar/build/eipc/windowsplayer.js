@@ -74,6 +74,15 @@ class WindowsPlayer {
       return false;
     }
   }
+  static async isInjectRunning() {
+    try {
+      const { stdout } = await execPromise('tasklist');
+      return stdout.toLowerCase().includes('celery');
+    } catch (error) {
+      console.error('Error executing tasklist:', error);
+      return false;
+    }
+  }
   static getInjectedProcesses() {
     const injectedProcesses = [];
     if (WindowsPlayer.isInjected()) {
@@ -81,6 +90,32 @@ class WindowsPlayer {
     }
     return injectedProcesses;
   }
+
+  static killSingleRobloxPlayerBeta() {
+    try {
+        // Get the list of RobloxPlayerBeta processes
+        const listCommand = 'tasklist /FI "IMAGENAME eq RobloxPlayerBeta.exe" /FO CSV';
+        const output = execSync(listCommand).toString();
+
+        // Count the number of processes listed
+        const lines = output.split('\n');
+        const processLines = lines.filter(line => line.includes('RobloxPlayerBeta.exe')).length;
+
+        if (processLines === 2) { // The header line counts as one
+            // Kill the process if exactly one is found
+            const killCommand = 'taskkill /IM RobloxPlayerBeta.exe /F';
+            execSync(killCommand, { stdio: 'ignore' });
+            console.log('RobloxPlayerBeta process terminated successfully.');
+            return true;
+        } else {
+            console.log('No single RobloxPlayerBeta process found or multiple instances found.');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error checking or terminating RobloxPlayerBeta process:', error);
+        return false;
+    }
+}
 
   static GetProcessIDByName(processName) {
     try {
