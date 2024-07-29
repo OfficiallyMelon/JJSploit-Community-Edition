@@ -146,10 +146,6 @@ module.exports = async function(){
     else{ 
         //Where to download it
         //Alert if the exploit is patched. Also reject downloading the update.
-        await DownloadFile(vars.latestData.CeleryFiles.CeleryInject_exe, path.resolve(vars.CeleryPath, "CeleryInject.exe"))
-        await DownloadFile(vars.latestData.CeleryFiles.CeleryIn_Bin, path.resolve(vars.CeleryPath, "CeleryIn.bin"))
-        await DownloadFile(vars.latestData.CeleryFiles.CeleryScript_Bin, path.resolve(vars.CeleryPath, "CeleryScript.bin"))
-
         if(vars.latestData.CeleryFiles.patched){
             isDev && console.log("Notify patched")
             vars.mainWindow.webContents.send('message', {"showMessageBox": {
@@ -177,13 +173,13 @@ module.exports = async function(){
                 //Don't bother downloading the latest module if the current version can't be deleted
                 if(isDeleted !== true) return
             }
+            //probably a better way to batch download these files, but eh
+
             await DownloadFile(vars.latestData.CeleryFiles.CeleryInject_exe, path.resolve(vars.CeleryPath, "CeleryInject.exe"))
             await DownloadFile(vars.latestData.CeleryFiles.CeleryIn_Bin, path.resolve(vars.CeleryPath, "CeleryIn.bin"))
             await DownloadFile(vars.latestData.CeleryFiles.CeleryScript_Bin, path.resolve(vars.CeleryPath, "CeleryScript.bin"))
-
-            //Download latest CeleryFiles
             //Record that an update was downloaded so it isnt redownloaded the next time JJSploit is opened
-            //SaveData({downloadedModuleVersion: vars.latestData.CeleryInject.exe.version})
+            //SaveData({downloadedModuleVersion: vars.latestData.CeleryFiles.CeleryInject_exe.version})
         }
     }
 }

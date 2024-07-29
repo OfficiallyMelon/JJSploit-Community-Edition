@@ -1,8 +1,11 @@
-const { execFileSync, spawnSync, spawn } = require('child_process');
+const { execFileSync, spawnSync, spawn, exec } = require('child_process');
+
 const fs = require('fs');
 const path = require('path');
 const { dialog } = require('electron'); // Assuming you're using Electron
 const attachcheck = require('../attachcheck.js');
+const vars = require('../variables')
+vars.CeleryPath = path.resolve(vars.resourcesPath, '../')
 
 class WindowsPlayer {
   static runLegacyInjector = true;
@@ -54,21 +57,23 @@ class WindowsPlayer {
     }
 
     WindowsPlayer.injectorProc = WindowsPlayer.runLegacyInjector
-      ? WindowsPlayer.executeAsAdmin(path.join(__dirname, 'CeleryInject.exe'), ['-abc213'])
-      : WindowsPlayer.executeAsAdmin(path.join(__dirname, 'CeleryLoader.exe'), ['-abc213']);
-    
+      ? WindowsPlayer.executeAsAdmin(path.join(vars.CeleryPath, 'CeleryInject.exe'), ['-abc213']):
+
     WindowsPlayer.lastProcInfo = pinfo;
     WindowsPlayer.isInjectingMainPlayer = false;
     attachcheck.AttachEnabled();
     return 'SUCCESS';
   }
 
-  static isRobloxRunning() {
-    // Placeholder function to simulate checking if Roblox is running
-    // Ideally, you would check for a specific window title or process name here
-    return true; // Assume Roblox is running for this example
+  static async isRobloxRunning() {
+    try {
+      const { stdout } = await execPromise('tasklist');
+      return stdout.toLowerCase().includes('roblox');
+    } catch (error) {
+      console.error('Error executing tasklist:', error);
+      return false;
+    }
   }
-
   static getInjectedProcesses() {
     const injectedProcesses = [];
     if (WindowsPlayer.isInjected()) {
