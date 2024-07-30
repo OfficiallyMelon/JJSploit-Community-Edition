@@ -12,7 +12,7 @@ var defaultConf = {
 	ui:{
 		topMost: false,
 		//Garbage version tracking, but now we're stuck with it
-		version: 46,
+		version: 47,
 	}
 }
 
