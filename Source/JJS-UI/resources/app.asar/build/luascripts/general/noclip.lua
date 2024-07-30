@@ -1,48 +1,19 @@
-local Character = game.Players.LocalPlayer.Character
-scriptRunning = true
-local CoreGui = game:GetService("CoreGui")
-
-if CoreGui:FindFirstChild("NoclipValue") then
-    scriptRunning = false
-    if CoreGui:FindFirstChild("NoclipValue").Value then
-        CoreGui:FindFirstChild("NoclipValue").Value = false
-        print("NoClip Enabled")
-    else
-        CoreGui:FindFirstChild("NoclipValue").Value = true
-        print("NoClip Disabled")
-    end
+_G.NoClip = not _G.NoClip
+LocalP = game.Players.LocalPlayer
+local CoreGui = game:GetService("StarterGui")
+function clip()
+if LocalP.Character.Humanoid.RigType == Enum.HumanoidRigType.R6 then
+    LocalP.Character.Head.CanCollide = _G.NoClip 
+    LocalP.Character.Torso.CanCollide = _G.NoClip
+else
+    LocalP.Character.Head.CanCollide = _G.NoClip 
+    LocalP.Character.LowerTorso.CanCollide = _G.NoClip
+    LocalP.Character.UpperTorso.CanCollide = _G.NoClip
 end
-
-if scriptRunning then
-Clip = false
-	wait(0.1)
-	local function NoclipLoop()
-		if Clip == false and Character ~= nil then
-			for _, child in pairs(Character:GetDescendants()) do
-				if child:IsA("BasePart") and child.CanCollide == true then
-					child.CanCollide = false
-				end
-			end
-		end
-	end
-	--Noclipping = RunService.Stepped:Connect(NoclipLoop)
-
-    -- To disable flying, call ToggleFly(false)
-if not CoreGui:FindFirstChild("NoclipValue") then
-    local FlyValue = Instance.new("BoolValue")
-    FlyValue.Parent = CoreGui
-    FlyValue.Name = "NoclipValue"
-    FlyValue.Value = false
 end
-
-game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Died:Connect(function()
-    CoreGui:FindFirstChild("NoclipValue"):Destroy()
-    script:Destroy()
-end)
-
-CoreGui:FindFirstChild("NoclipValue"):GetPropertyChangedSignal("Value"):Connect(function()
-    Clip = CoreGui:FindFirstChild("NoclipValue").Value
-    print(tostring(CoreGui:FindFirstChild("NoclipValue").Value))
-end)
-
-end
+CoreGui:SetCore("SendNotification", {
+	Title = "WRD";
+	Text = "NoClip CanCollide " .. tostring(_G.NoClip);
+	Duration = 1.5;
+})
+clip()

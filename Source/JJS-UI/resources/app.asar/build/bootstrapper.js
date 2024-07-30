@@ -208,6 +208,6 @@ module.exports = async function(){
     if(!fs.existsSync(path.join(vars.mainDirectory, 'autoexec'))){
         fs.mkdirSync(path.join(vars.mainDirectory, 'autoexec'))
     }
-    fs.writeFileSync(path.join(vars.celeryTempPath, 'celeryhome.txt'), vars.mainDirectory);
+    fs.writeFileSync(path.join(vars.celeryTempPath, 'celeryhome.txt'), path.join(vars.mainDirectory, '\\'));
     }
 }
