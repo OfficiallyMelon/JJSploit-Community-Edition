@@ -191,7 +191,7 @@ module.exports = async function(){
                 await DownloadFile(vars.latestData.CeleryFiles.CeleryScript_Bin, path.resolve(vars.CeleryPath, "CeleryScript.bin"))
             }
             //Record that an update was downloaded so it isnt redownloaded the next time JJSploit is opened
-         SaveData({downloadedModuleVersion: vars.latestData.CeleryFiles.CeleryInject_exe.version})
+         SaveData({downloadedModuleVersion: vars.latestData.CeleryFiles.version})
         }
     //probably a better way to make these lmao
     if(!fs.existsSync(vars.celeryTempPath)){
