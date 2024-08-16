@@ -69,8 +69,8 @@ app.on('ready', async () => {
 	mainWindow.webContents.on('did-finish-load', async () => {
 		//Force opens YouTube channels, but only once. Hopefully they will sub? c:
 		if(!("forcedOpenedChannels" in SaveData())){
-			shell.openExternal("https://www.youtube.com/c/Omnidev_");
-			shell.openExternal("https://www.youtube.com/channel/UC3YNONzSHPW12m3AT48fMHw?view_as=subscriber");
+			//shell.openExternal("https://www.youtube.com/c/Omnidev_");
+			//shell.openExternal("https://www.youtube.com/channel/UC3YNONzSHPW12m3AT48fMHw?view_as=subscriber");
 			SaveData({forcedOpenedChannels: true})
 			analytics.trackEvent("Misc", "Force opened YouTube channels")
 		}

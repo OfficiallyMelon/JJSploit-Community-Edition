@@ -167,12 +167,12 @@
                      type: "Website"
                   }), r.a.createElement(u, {
                      link: "https://www.youtube.com/c/Omnidev_",
-                     text: "Learn Code",
+                     text: "Learn Lua",
                      type: "YouTube"
                   }), r.a.createElement(u, {
-                     link: "https://www.youtube.com/channel/UC3YNONzSHPW12m3AT48fMHw",
-                     text: "Exploit Tutorials",
-                     type: "YouTube"
+                     link: "https://discord.gg/celery",
+                     text: "Discord Server",
+                     type: "Discord"
                   }))), r.a.createElement("br", null), r.a.createElement("div", {
                      className: "section lessgapchildren"
                   }, r.a.createElement("p", null, "Notes:"), r.a.createElement("p", null, "*Use a ", r.a.createElement("a", {
@@ -831,7 +831,7 @@
                      href: "https://discord.gg/Celery",
                      target: "_blank",
                      rel: "noopener noreferrer"
-                  }, " wearedevs.net")), r.a.createElement("div", {
+                  }, " @officiallymelon")), r.a.createElement("div", {
                      id: "actions"
                   }, r.a.createElement("button", {
                      id: "fixroblox",
